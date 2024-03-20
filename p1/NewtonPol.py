@@ -1,16 +1,12 @@
-from math import factorial
-
 def f_in_xk(k: int):
     return values[item][k][1]
 
 
-def finite_difference(k: int, order: int):
-    if order > 1:
-        return finite_difference(k + 1, order - 1) - finite_difference(k, order - 1)
-    elif order == 1:
-        return f_in_xk(k + 1) - f_in_xk(k)
+def divided_difference(va: list, order):
+    if order >= 1:
+        return (divided_difference(va[1:], order - 1) - divided_difference(va[:-1], order - 1)) / (values[item][va[-1]][0] - values[item][va[0]][0])
     else:
-        return f_in_xk(k)
+        return f_in_xk(va[0])
 
 
 # Значения из пунктов a) и b)
@@ -30,22 +26,19 @@ items = ['a', 'b', 'c']
 
 for item in items:
     points_count = len(values[item])
-
-    # h = x2 - x1
-    h = values[item][1][0] - values[item][0][0]
     sum = 0
 
-    # q = (x - x0) / h
-    q = lambda x: (x - values[item][0][0]) / h
     x = correct_value[0]
 
     for i in range(0, points_count):
-        temp_sum = finite_difference(0, i)
+        v = []
+        for j in range(0, i + 1):
+            v.append(j)
+
+        temp_sum = divided_difference(v, i)
 
         for j in range(0, i):
-            temp_sum *= q(x) - j
-
-        temp_sum /= factorial(i)
+            temp_sum *= (x - values[item][j][0])
 
         sum += temp_sum
 
